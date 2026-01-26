@@ -1,0 +1,33 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.sqlite3
+.env
+db.sqlite3
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# PyCharm / JetBrains
+.idea/
+*.iml
+*.iws
+
+# macOS
+.DS_Store
+
+# Logs / temp
+*.log
+tmp/
+temp/
+
+# Static / media
+/staticfiles/
+/media/

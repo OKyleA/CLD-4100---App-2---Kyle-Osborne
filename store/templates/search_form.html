@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Product - Inventory System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        form { margin-top: 20px; }
+        input[type="text"] { padding: 8px; width: 300px; }
+        button { padding: 8px 16px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background: #45a049; }
+    </style>
+</head>
+<body>
+
+    <h1>Search by Product Number</h1>
+
+    {# Navigation links #}
+    <p><a href="{% url 'all_products' %}">View All Products</a> |
+       <a href="{% url 'search_product' %}">New Search</a></p>
+
+    <form method="get">
+        <label for="product_number">Enter Product Number:</label><br>
+        <input type="text" id="product_number" name="product_number" required placeholder="e.g., CCOLA-001">
+        <button type="submit">Search</button>
+    </form>
+
+</body>
+</html>
