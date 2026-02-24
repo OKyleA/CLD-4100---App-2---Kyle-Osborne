@@ -1,3 +1,5 @@
+<!-- DEBUG: This is the updated search_form.html from Feb 23 2026 -->
+<!-- DEBUG: Updated search_form.html - Feb 23 2026 20:xx - openidconnect slug -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,6 +16,14 @@
     </style>
 </head>
 <body>
+
+    <div class="auth-status">
+    {% if user.is_authenticated %}
+        <p>Welcome, {{ user.username }}! <a href="{% url 'logout' %}">Logout</a></p>
+    {% else %}
+        <p><a href="{% url 'social:begin' 'oidc' %}">Login with AWS Cognito</a></p>
+    {% endif %}
+    </div>
 
     <h1>Search by Product Number</h1>
 

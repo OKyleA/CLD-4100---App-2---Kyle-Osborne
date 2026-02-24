@@ -22,5 +22,7 @@ from django.urls import path, include  # ← Make sure include is imported
 
 urlpatterns = [
     path('admin/', admin.site.urls),                # Admin site
-    path('', include('store.urls')),                # Includes all URLs from store/urls.py at root level
+    path('store/', include('store.urls')),
+    path('auth/', include('social_django.urls', namespace='social')),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]

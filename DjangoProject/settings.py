@@ -38,7 +38,52 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'store',
+    'social_django',
 ]
+# Authentication backends - use OpenID Connect for AWS Cognito (per Culkin & Zazon (2021) AWS Cookbook security recipes)
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.open_id_connect.OpenIdConnectAuth',  # Correct backend for Cognito OIDC
+    'django.contrib.auth.backends.ModelBackend',  # Keep for admin/superuser login
+)
+"""
+# Temporary debug lines to check if the backend loads
+from social_core.backends.open_id_connect import OpenIdConnectAuth
+print("OpenIdConnectAuth loaded successfully:", OpenIdConnectAuth.name)  # Should print 'openidconnect'
+"""
+# AWS Cognito OIDC configuration (per Culkin & Zazon (2021) AWS Cookbook security recipes for identity integration)
+SOCIAL_AUTH_OIDC_OIDC_ENDPOINT = 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_G8L46R8pQ'  # ← your User pool ID (no trailing slash here)
+SOCIAL_AUTH_OIDC_KEY = '4epaa9j4cc5e5hauqlm2c0t25r'  # Your App client ID
+SOCIAL_AUTH_OIDC_SECRET = ''  # Public client → leave blank
+
+SOCIAL_AUTH_OIDC_SCOPE = ['openid', 'email', 'profile']
+
+# Redirect URI for local testing (add CloudFront later)
+SOCIAL_AUTH_OIDC_REDIRECT_URI = 'http://localhost:8000/auth/complete/oidc'
+
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = False  # ← Forces consistent HTTP redirect_uri handling
+
+SOCIAL_AUTH_OIDC_CLIENT_AUTHENTICATION_METHOD = 'none'  # tells backend: do NOT send client_secret
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',           # creates Django user if missing
+    'social_core.pipeline.social_auth.associate_user', # links by email if exists
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',          # updates first_name, last_name, etc.
+)
+
+LOGIN_REDIRECT_URL = '/store/all/'  # After login go to products
+
+print("DEBUG: SOCIAL_AUTH_OIDC_OIDC_ENDPOINT =", SOCIAL_AUTH_OIDC_OIDC_ENDPOINT)
+# Optional: check old one without crashing
+try:
+    print("DEBUG: Old name still exists? SOCIAL_AUTH_OPENIDCONNECT_OIDC_ENDPOINT =", SOCIAL_AUTH_OPENIDCONNECT_OIDC_ENDPOINT)
+except NameError:
+    print("DEBUG: Old OPENIDCONNECT name is gone (good)")
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -55,11 +100,11 @@ ROOT_URLCONF = 'DjangoProject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -74,7 +119,7 @@ WSGI_APPLICATION = 'DjangoProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'inventory_db',
@@ -82,6 +127,13 @@ DATABASES = {
         'PASSWORD': 'Deadpool432!',  # use your password
         'HOST': 'cld4100-app2-db.ch6064egwqwq.us-east-2.rds.amazonaws.com',
         'PORT': '3306',
+    }
+}
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 

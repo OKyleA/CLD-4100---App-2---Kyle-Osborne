@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Inventory System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input {
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .cognito {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>Login to Inventory System</h2>
+
+        {% if form.errors %}
+            <p class="error">Invalid username or password. Try again.</p>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.username.label_tag }} {{ form.username }}
+            {{ form.password.label_tag }} {{ form.password }}
+            <button type="submit">Login</button>
+            <input type="hidden" name="next" value="{{ next }}" />
+        </form>
+
+        <div class="cognito">
+            <p>Or <a href="{% url 'social:begin' 'oidc' %}">Login with AWS Cognito</a></p>
+        </div>
+    </div>
+
+</body>
+</html>
